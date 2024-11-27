@@ -5,6 +5,8 @@ import PokemonCard from "./PokemonCard";
 const PokemonPage = () => {
   const [pokemon, setPokemon] = useState([]);
   const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [err, setErr] = useState("");
   const API = "https://pokeapi.co/api/v2/pokemon?limit=50";
 
   const fetchPokemon = async () => {
@@ -19,8 +21,11 @@ const PokemonPage = () => {
       });
       const detailPokemonRes = await Promise.all(detailPokemon);
       setPokemon(detailPokemonRes);
+      setLoading(false);
     } catch (error) {
       console.log(error);
+      setErr(error);
+      setLoading(false);
     }
   };
 
@@ -32,6 +37,14 @@ const PokemonPage = () => {
     curPokemon.name.toLowerCase().includes(search.toLocaleLowerCase())
   );
 
+  if (loading) {
+    return <h1 className="text-4xl font-bold text-center">Loading...</h1>;
+  }
+  if (err) {
+    return <h1 className="text-4xl font-bold text-center">
+       {err.message || "An unexpected error occurred"}
+    </h1>;
+  }
   return (
     <>
       <h1 className="text-center text-4xl font-bold my-3">
